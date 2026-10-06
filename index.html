@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS 20 Academic Reading Test 1 - Computer-Delivered Testing Interface</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Strict Times New Roman Academic Typography */
+    body, button, input, select, textarea, table, h1, h2, h3, h4, h5, h6, p, span, div, label {
+      font-family: 'Times New Roman', Times, Georgia, serif !important;
+    }
+
+    /* Computer-Delivered IELTS Design System */
+    :root {
+      --cd-header: #1e293b;
+      --cd-accent: #0b2545;
+      --cd-gold: #c29b38;
+      --cd-crimson: #8b0000;
+      --cd-border: #cbd5e1;
+      --cd-bg-pane: #f8fafc;
+      --cd-card: #ffffff;
+      --cd-answered: #0b2545;
+      --cd-active: #c29b38;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: text;
+    }
+
+    /* Split-Pane Layout */
+    .cd-workspace {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 120px);
+      overflow: hidden;
+      background-color: #e2e8f0;
+    }
+
+    .cd-pane {
+      height: 100%;
+      overflow-y: auto;
+      background-color: var(--cd-bg-pane);
+      padding: 1.5rem;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    .cd-pane-left {
+      width: 50%;
+      border-right: 2px solid #cbd5e1;
+      background-color: #ffffff;
+    }
+
+    .cd-pane-right {
+      width: 50%;
+      background-color: #f1f5f9;
+    }
+
+    @media (max-width: 900px) {
+      .cd-workspace {
+        flex-direction: column;
+        height: calc(100vh - 145px);
+      }
+      .cd-pane-left, .cd-pane-right {
+        width: 100%;
+        height: 50%;
+      }
+      .cd-pane-left {
+        border-right: none;
+        border-bottom: 2px solid #cbd5e1;
+      }
+    }
+
+    /* Paper & Academic Card Styling */
+    .passage-card {
+      background-color: #ffffff;
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .question-card {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .question-card.active-target {
+      border-color: #0b2545;
+      box-shadow: 0 0 0 2px rgba(11, 37, 69, 0.25);
+    }
+
+    /* CD-IELTS Question Number Badge */
+    .cd-qnum {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      background-color: #0b2545;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 0.85rem;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* CD-IELTS Input styling */
+    .cd-input {
+      border: 1px solid #94a3b8;
+      border-radius: 3px;
+      padding: 0.25rem 0.5rem;
+      background-color: #ffffff;
+      font-size: 0.95rem;
+      transition: all 0.15s ease-in-out;
+    }
+    .cd-input:focus {
+      outline: none;
+      border-color: #0b2545;
+      background-color: #f8fafc;
+      box-shadow: 0 0 0 2px rgba(11, 37, 69, 0.2);
+    }
+
+    /* Passage Paragraph Badges */
+    .para-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      background-color: #0b2545;
+      color: #ffffff;
+      font-weight: bold;
+      border-radius: 3px;
+      margin-right: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    /* Highlighted text */
+    .cd-highlight {
+      background-color: #fef08a !important;
+      color: #1e293b !important;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+
+    /* Custom Scrollbar for Authentic Exam Feel */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen select-none">
+
+  <!-- Top CD-IELTS Header Banner -->
+  <header class="h-16 bg-[#1e293b] text-white flex items-center justify-between px-4 border-b-2 border-[#c29b38] z-20 flex-shrink-0">
+    <!-- Candidate Info -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <svg class="w-7 h-7 text-[#c29b38]" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm0 2.18l7 2.33v4.49c0 4.54-3.14 8.79-7 9.92-3.86-1.13-7-5.38-7-9.92V6.51l7-2.33zM11 7h2v6h-2zm0 8h2v2h-2z"/>
+        </svg>
+        <div>
+          <div class="text-sm font-bold tracking-wider uppercase">IELTS Academic Reading • Computer-Delivered</div>
+          <div class="text-xs text-slate-300">Official Standard Examination Interface</div>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-3 border-l border-slate-600 pl-4 text-xs">
+        <div><span class="text-slate-400">Candidate:</span> <strong id="headerCandidateName" class="text-white">Academic Candidate</strong></div>
+        <div><span class="text-slate-400">ID:</span> <strong class="text-amber-300">IELTS-20-ACAD-01</strong></div>
+      </div>
+    </div>
+
+    <!-- Pacing & Tools -->
+    <div class="flex items-center gap-3">
+      <!-- Highlight Active Tool -->
+      <button onclick="toggleHighlightSelection()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs px-2.5 py-1.5 rounded flex items-center gap-1.5 transition border border-slate-500" title="Select text in reading passage and click Highlight">
+        <svg class="w-3.5 h-3.5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+        <span>Highlight Text</span>
+      </button>
+
+      <!-- Answered Counter -->
+      <div class="bg-slate-800 border border-slate-700 px-3 py-1 rounded text-xs text-slate-200">
+        <span class="text-slate-400">Answered:</span>
+        <span id="answeredHeaderCounter" class="font-bold text-amber-300 ml-1">0 / 40</span>
+      </div>
+
+      <!-- Submit Exam Button -->
+      <button onclick="openModal('confirmModal')" class="bg-[#8b0000] hover:bg-[#a4161a] text-white px-3.5 py-1.5 rounded text-xs font-bold tracking-wider shadow transition border border-red-400 flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span>SUBMIT EXAM</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Split Workspace (50% Reading Passage | 50% Questions) -->
+  <main class="cd-workspace select-text">
+
+    <!-- LEFT PANE: Full Reading Passages (Scrollable) -->
+    <section class="cd-pane cd-pane-left" id="readingPane">
+      
+      <!-- ================= PASSAGE 1 ================= -->
+      <article id="passage-content-1" class="passage-view space-y-4 text-justify">
+        <div class="border-b-2 border-[#0b2545] pb-2 mb-4">
+          <span class="text-xs uppercase font-bold tracking-wider text-[#8b0000]">Reading Passage 1</span>
+          <h2 class="text-2xl font-bold text-[#0b2545] mt-1">The kākāpō</h2>
+          <p class="text-sm italic text-slate-600">The kākāpō is a nocturnal, flightless parrot that is critically endangered and one of New Zealand’s unique treasures</p>
+        </div>
+
+        <div class="passage-card space-y-4 text-slate-800">
+          <p>
+            The kākāpō, also known as the owl parrot, is a large, forest-dwelling bird, with a pale owl-like face. Up to 64 cm in length, it has predominantly yellow-green feathers, forward-facing eyes, a large grey beak, large blue feet, and relatively short wings and tail. It is the world’s only flightless parrot, and is also possibly one of the world’s longest-living birds, with a reported lifespan of up to 100 years.
+          </p>
+          <p>
+            Kākāpō are solitary birds and tend to occupy the same home range for many years. They forage on the ground and climb high into trees. They often leap from trees and flap their wings, but at best manage a controlled descent to the ground. They are entirely vegetarian, with their diet including the leaves, roots and bark of trees as well as bulbs, and fern fronds.
+          </p>
+          <p>
+            Kākāpō breed in summer and autumn, but only in years when food is plentiful. Males play no part in incubation or chick-rearing – females alone incubate eggs and feed the chicks. The 1–4 eggs are laid in soil, which is repeatedly turned over before and during incubation. The female kākāpō has to spend long periods away from the nest searching for food, which leaves the unattended eggs and chicks particularly vulnerable to predators.
+          </p>
+          <p>
+            Before humans arrived, kākāpō were common throughout New Zealand’s forests. However, this all changed with the arrival of the first Polynesian settlers about 700 years ago. For the early settlers, the flightless kākāpō was easy prey. They ate its meat and used its feathers to make soft cloaks. With them came the Polynesian dog and rat, which also preyed on kākāpō. By the time European colonisers arrived in the early 1800s, kākāpō had become confined to the central North Island and forested parts of the South Island. The fall in kākāpō numbers was accelerated by European colonisation. A great deal of habitat was lost through forest clearance, and introduced species such as deer depleted the remaining forests of food. Other predators such as cats, stoats and two more species of rat were also introduced. The kākāpō were in serious trouble.
+          </p>
+          <p>
+            In 1894, the New Zealand government launched its first attempt to save the kākāpō. Conservationist Richard Henry led an effort to relocate several hundred of the birds to predator-free Resolution Island in Fiordland. Unfortunately, the island didn’t remain predator free – stoats arrived within six years, eventually destroying the kākāpō population. By the mid-1900s, the kākāpō was practically a lost species. Only a few clung to life in the most isolated parts of New Zealand.
+          </p>
+          <p>
+            From 1949 to 1973, the newly formed New Zealand Wildlife Service made over 60 expeditions to find kākāpō, focusing mainly on Fiordland. Six were caught, but there were no females amongst them and all but one died within a few months of captivity. In 1974, a new initiative was launched, and by 1977, 18 more kākāpō were found in Fiordland. However, there were still no females. In 1977, a large population of males was spotted in Rakiura – a large island free from stoats, ferrets and weasels. There were about 200 individuals, and in 1980 it was confirmed females were also present. These birds have been the foundation of all subsequent work in managing the species.
+          </p>
+          <p>
+            Unfortunately, predation by feral cats on Rakiura Island led to a rapid decline in kākāpō numbers. As a result, during 1980–97, the surviving population was evacuated to three island sanctuaries: Codfish Island, Maud Island and Little Barrier Island. However, breeding success was hard to achieve. Rats were found to be a major predator of kākāpō chicks and an insufficient number of chicks survived to offset adult mortality. By 1995, although at least 12 chicks had been produced on the islands, only three had survived. The kākāpō population had dropped to 51 birds. The critical situation prompted an urgent review of kākāpō management in New Zealand.
+          </p>
+          <p>
+            In 1996, a new Recovery Plan was launched, together with a specialist advisory group called the Kākāpō Scientific and Technical Advisory Committee and a higher amount of funding. Renewed steps were taken to control predators on the three islands. Cats were eradicated from Little Barrier Island in 1980, and possums were eradicated from Codfish Island by 1986. However, the population did not start to increase until rats were removed from all three islands, and the birds were more intensively managed. This involved moving the birds between islands, supplementary feeding of adults and rescuing and hand-raising any failing chicks.
+          </p>
+          <p>
+            After the first five years of the Recovery Plan, the population was on target. By 2000, five new females had been produced, and the total population had grown to 62 birds. For the first time, there was cautious optimism for the future of kākāpō and by June 2020, a total of 210 birds was recorded.
+          </p>
+          <p>
+            Today, kākāpō management continues to be guided by the kākāpō Recovery Plan. Its key goals are: minimise the loss of genetic diversity in the kākāpō population, restore or maintain sufficient habitat to accommodate the expected increase in the kākāpō population, and ensure stakeholders continue to be fully engaged in the preservation of the species.
+          </p>
+        </div>
+      </article>
+
+      <!-- ================= PASSAGE 2 ================= -->
+      <article id="passage-content-2" class="passage-view space-y-4 text-justify hidden">
+        <div class="border-b-2 border-[#0b2545] pb-2 mb-4">
+          <span class="text-xs uppercase font-bold tracking-wider text-[#8b0000]">Reading Passage 2</span>
+          <h2 class="text-2xl font-bold text-[#0b2545] mt-1">Reintroducing Elms to Britain</h2>
+          <p class="text-sm italic text-slate-600">Mark Rowe investigates attempts to reintroduce elms to Britain</p>
+        </div>
+
+        <div class="passage-card space-y-4 text-slate-800">
+          <p>
+            <span class="para-badge">A</span>
+            Around 25 million elms, accounting for 90% of all elm trees in the UK, died during the 1960s and ’70s of Dutch elm disease. In the aftermath, the elm, once so dominant in the British landscape, was largely forgotten. However, there’s now hope the elm may be reintroduced to the countryside of central and southern England. Any reintroduction will start from a very low base. ‘The impact of the disease is difficult to picture if you hadn’t seen what was there before,’ says Matt Elliot of the Woodland Trust. ‘You look at old photographs from the 1960s and it’s only then that you realise the impact [elms had] ... They were significant, large trees ... then they were gone.’
+          </p>
+          <p>
+            <span class="para-badge">B</span>
+            The disease is caused by a fungus that blocks the elms’ vascular (water, nutrient and food transport) system, causing branches to wilt and die. A first epidemic, which occurred in the 1920s, gradually died down, but in the ’70s a second epidemic was triggered by shipments of elm from Canada. The wood came in the form of logs destined for boat building and its intact bark was perfect for the elm bark beetles that spread the deadly fungus. This time, the beetles carried a much more virulent strain that destroyed the vast majority of British elms.
+          </p>
+          <p>
+            <span class="para-badge">C</span>
+            Today, elms still exist in the southern English countryside but mostly only in low hedgerows between fields. ‘We have millions of small elms in hedgerows but they get targeted by the beetle as soon as they reach a certain size,’ says Karen Russell, co-author of the report ‘Where we are with elm’. Once the trunk of the elm reaches 10–15 centimetres or so in diameter, it becomes a perfect size for beetles to lay eggs and for the fungus to take hold. Yet mature specimens have been identified, in counties such as Cambridgeshire, that are hundreds of years old, and have mysteriously escaped the epidemic. The key, Russell says, is to identify and study those trees that have survived and work out why they stood tall when millions of others succumbed. Nevertheless, opportunities are limited as the number of these mature survivors is relatively small. ‘What are the reasons for their survival?’ asks Russell. ‘Avoidance, tolerance, resistance? We don’t know where the balance lies between the three. I don’t see how it can be entirely down to luck.’
+          </p>
+          <p>
+            <span class="para-badge">D</span>
+            For centuries, elm ran a close second to oak as the hardwood tree of choice in Britain and was in many instances the most prominent tree in the landscape. Not only was elm common in European forests, it became a key component of birch, ash and hazel woodlands. The use of elm is thought to go back to the Bronze Age, when it was widely used for tools. Elm was also the preferred material for shields and early swords. In the 18th century, it was planted more widely and its wood was used for items such as storage crates and flooring. It was also suitable for items that experienced high levels of impact and was used to build the keel of the 19th-century sailing ship Cutty Sark as well as mining equipment.
+          </p>
+          <p>
+            <span class="para-badge">E</span>
+            Given how ingrained elm is in British culture, it’s unsurprising the tree has many advocates. Amongst them is Peter Bourne of the National Elm Collection in Brighton. ‘I saw Dutch elm disease unfold as a small boy,’ he says. ‘The elm seemed to be part of rural England, but I remember watching trees just lose their leaves and that really stayed with me.’ Today, the city of Brighton’s elms total about 17,000. Local factors appear to have contributed to their survival. Strong winds from the sea make it difficult for the determined elm bark beetle to attack this coastal city’s elm population. However, the situation is precarious. ‘The beetles can just march in if we’re not careful, as the threat is right on our doorstep,’ says Bourne.
+          </p>
+          <p>
+            <span class="para-badge">F</span>
+            Any prospect of the elm returning relies heavily on trees being either resistant to, or tolerant of, the disease. This means a widespread reintroduction would involve existing or new hybrid strains derived from resistant, generally non-native elm species. A new generation of seedlings have been bred and tested to see if they can withstand the fungus by cutting a small slit on the bark and injecting a tiny amount of the pathogen. ‘The effects are very quick,’ says Russell. ‘You return in four to six weeks and trees that are resistant show no symptoms, whereas those that are susceptible show leaf loss and may even have died completely.’
+          </p>
+          <p>
+            <span class="para-badge">G</span>
+            All of this raises questions of social acceptance, acknowledges Russell. ‘If we’re putting elm back into the landscape, a small element of it is not native – are we bothered about that?’ For her, the environmental case for reintroducing elm is strong. ‘They will host wildlife, which is a good thing.’ Others are more wary. ‘On the face of it, it seems like a good idea,’ says Elliot. The problem, he suggests, is that, ‘You’re replacing a native species with a horticultural analogue*. You’re effectively cloning.’ There’s also the risk of introducing new diseases. Rather than plant new elms, the Woodland Trust emphasises providing space to those elms that have survived independently. ‘Sometimes the best thing you can do is just give nature time to recover ... over time, you might get resistance,’ says Elliot.
+          </p>
+          <p class="text-xs text-slate-500 italic pt-2 border-t border-slate-200">
+            * horticultural analogue: a cultivated plant species that is genetically similar to an existing species
+          </p>
+        </div>
+      </article>
+
+      <!-- ================= PASSAGE 3 ================= -->
+      <article id="passage-content-3" class="passage-view space-y-4 text-justify hidden">
+        <div class="border-b-2 border-[#0b2545] pb-2 mb-4">
+          <span class="text-xs uppercase font-bold tracking-wider text-[#8b0000]">Reading Passage 3</span>
+          <h2 class="text-2xl font-bold text-[#0b2545] mt-1">How stress affects our judgement</h2>
+          <p class="text-sm italic text-slate-600">An exploration of neuroscience, decision-making and cognitive bias</p>
+        </div>
+
+        <div class="passage-card space-y-4 text-slate-800">
+          <p>
+            Some of the most important decisions of our lives occur while we’re feeling stressed and anxious. From medical decisions to financial and professional ones, we are all sometimes required to weigh up information under stressful conditions. But do we become better or worse at processing and using information under such circumstances?
+          </p>
+          <p>
+            My colleague and I, both neuroscientists, wanted to investigate how the mind operates under stress, so we visited some local fire stations. Firefighters’ workdays vary quite a bit. Some are pretty relaxed; they’ll spend their time washing the truck, cleaning equipment, cooking meals and reading. Other days can be hectic, with numerous life-threatening incidents to attend to; they’ll enter burning homes to rescue trapped residents, and assist with medical emergencies. These ups and downs presented the perfect setting for an experiment on how people’s ability to use information changes when they feel under pressure.
+          </p>
+          <p>
+            We found that perceived threat acted as a trigger for a stress reaction that made the task of processing information easier for the firefighters – but only as long as it conveyed bad news.
+          </p>
+          <p>
+            This is how we arrived at these results. We asked the firefighters to estimate their likelihood of experiencing 40 different adverse events in their life, such as being involved in an accident or becoming a victim of card fraud. We then gave them either good news (that their likelihood of experiencing these events was lower than they’d thought) or bad news (that it was higher) and asked them to provide new estimates.
+          </p>
+          <p>
+            People are normally quite optimistic – they will ignore bad news and embrace the good. This is what happened when the firefighters were relaxed; but when they were under stress, a different pattern emerged. Under these conditions, they became hyper-vigilant to bad news, even when it had nothing to do with their job (such as learning that the likelihood of card fraud was higher than they’d thought), and altered their beliefs in response. In contrast, stress didn’t change how they responded to good news (such as learning that the likelihood of card fraud was lower than they’d thought).
+          </p>
+          <p>
+            Back in our lab, we observed the same pattern in students who were told they had to give a surprise public speech, which would be judged by a panel, recorded and posted online. Sure enough, their cortisol levels spiked, their heart rates went up and they suddenly became better at processing unrelated, yet alarming, information about rates of disease and violence.
+          </p>
+          <p>
+            When we experience stressful events, a physiological change is triggered that causes us to take in warnings and focus on what might go wrong. Brain imaging reveals that this ‘switch’ is related to a sudden boost in a neural signal important for learning, specifically in response to unexpected warning signs, such as faces expressing fear.
+          </p>
+          <p>
+            Such neural engineering could have helped prehistoric humans to survive. When our ancestors found themselves surrounded by hungry animals, they would have benefited from an increased ability to learn about hazards. In a safe environment, however, it would have been wasteful to be on high alert constantly. So, a neural switch that automatically increases or decreases our ability to process warnings in response to changes in our environment could have been useful. In fact, people with clinical depression and anxiety seem unable to switch away from a state in which they absorb all the negative messages around them.
+          </p>
+          <p>
+            It is also important to realise that stress travels rapidly from one person to the next. If a co-worker is stressed, we are more likely to tense up and feel stressed ourselves. We don’t even need to be in the same room with someone for their emotions to influence our behaviour. Studies show that if we observe positive feeds on social media, such as images of a pink sunset, we are more likely to post uplifting messages ourselves. If we observe negative posts, such as complaints about a long queue at the coffee shop, we will in turn create more negative posts.
+          </p>
+          <p>
+            In some ways, many of us now live as if we are in danger, constantly ready to tackle demanding emails and text messages, and respond to news alerts and comments on social media. Repeatedly checking your phone, according to a survey conducted by the American Psychological Association, is related to stress. In other words, a pre-programmed physiological reaction, which evolution has equipped us with to help us avoid famished predators, is now being triggered by an online post. Social media posting, according to one study, raises your pulse, makes you sweat, and enlarges your pupils more than most daily activities.
+          </p>
+          <p>
+            The fact that stress increases the likelihood that we will focus more on alarming messages, together with the fact that it spreads extremely rapidly, can create collective fear that is not always justified. After a stressful public event, such as a natural disaster or major financial crash, there is often a wave of alarming information in traditional and social media, which individuals become very aware of. But that has the effect of exaggerating existing danger. And so, a reliable pattern emerges – stress is triggered, spreading from one person to the next, which temporarily enhances the likelihood that people will take in negative reports, which increases stress further. As a result, trips are cancelled, even if the disaster took place across the globe; stocks are sold, even if holding on is the best thing to do.
+          </p>
+          <p>
+            The good news, however, is that positive emotions, such as hope, are contagious too, and are powerful in inducing people to act to find solutions. Being aware of the close relationship between people’s emotional state and how they process information can help us frame our messages more effectively and become conscientious agents of change.
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <!-- RIGHT PANE: Questions Side-By-Side (Scrollable) -->
+    <section class="cd-pane cd-pane-right" id="questionsPane">
+
+      <!-- ================= QUESTIONS 1–13 (PASSAGE 1) ================= -->
+      <div id="qgroup-1" class="question-group space-y-4">
+        
+        <!-- Header & Instruction -->
+        <div class="bg-white p-4 border border-slate-300 rounded shadow-sm">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 1–6</h3>
+          <p class="text-xs text-slate-600 mt-1 italic">
+            Do the following statements agree with the information given in Reading Passage 1?
+          </p>
+          <div class="mt-2 text-xs bg-slate-50 p-2.5 rounded border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-1">
+            <div><strong class="text-slate-900">TRUE</strong>: statement agrees</div>
+            <div><strong class="text-slate-900">FALSE</strong>: contradicts</div>
+            <div><strong class="text-slate-900">NOT GIVEN</strong>: no info</div>
+          </div>
+        </div>
+
+        <!-- Q1 -->
+        <div class="question-card" id="card-q1">
+          <div class="flex items-start gap-2.5 mb-2.5">
+            <span class="cd-qnum">1</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">There are other parrots that share the kakapo’s inability to fly.</div>
+          </div>
+          <div class="ml-9 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q1" value="TRUE" onchange="markAnswered(1)"> TRUE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q1" value="FALSE" onchange="markAnswered(1)"> FALSE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q1" value="NOT GIVEN" onchange="markAnswered(1)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-card" id="card-q2">
+          <div class="flex items-start gap-2.5 mb-2.5">
+            <span class="cd-qnum">2</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">Adult kakapo produce chicks every year.</div>
+          </div>
+          <div class="ml-9 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q2" value="TRUE" onchange="markAnswered(2)"> TRUE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q2" value="FALSE" onchange="markAnswered(2)"> FALSE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q2" value="NOT GIVEN" onchange="markAnswered(2)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-card" id="card-q3">
+          <div class="flex items-start gap-2.5 mb-2.5">
+            <span class="cd-qnum">3</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">Adult male kakapo bring food back to nesting females.</div>
+          </div>
+          <div class="ml-9 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q3" value="TRUE" onchange="markAnswered(3)"> TRUE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q3" value="FALSE" onchange="markAnswered(3)"> FALSE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q3" value="NOT GIVEN" onchange="markAnswered(3)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-card" id="card-q4">
+          <div class="flex items-start gap-2.5 mb-2.5">
+            <span class="cd-qnum">4</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">The Polynesian rat was a greater threat to the kakapo than Polynesian settlers.</div>
+          </div>
+          <div class="ml-9 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q4" value="TRUE" onchange="markAnswered(4)"> TRUE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q4" value="FALSE" onchange="markAnswered(4)"> FALSE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q4" value="NOT GIVEN" onchange="markAnswered(4)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-card" id="card-q5">
+          <div class="flex items-start gap-2.5 mb-2.5">
+            <span class="cd-qnum">5</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">Kakapo were transferred from Rakiura Island to other locations because they were at risk from feral cats.</div>
+          </div>
+          <div class="ml-9 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q5" value="TRUE" onchange="markAnswered(5)"> TRUE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q5" value="FALSE" onchange="markAnswered(5)"> FALSE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q5" value="NOT GIVEN" onchange="markAnswered(5)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-card" id="card-q6">
+          <div class="flex items-start gap-2.5 mb-2.5">
+            <span class="cd-qnum">6</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">One Recovery Plan initiative that helped increase the kakapo population size was caring for struggling young birds.</div>
+          </div>
+          <div class="ml-9 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q6" value="TRUE" onchange="markAnswered(6)"> TRUE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q6" value="FALSE" onchange="markAnswered(6)"> FALSE</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q6" value="NOT GIVEN" onchange="markAnswered(6)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Questions 7–13 Notes Completion -->
+        <div class="bg-white p-5 border border-slate-300 rounded shadow-sm space-y-4">
+          <div class="border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-[#0b2545]">Questions 7–13</h3>
+            <p class="text-xs text-slate-600 italic">
+              Complete the notes below. Choose <strong class="text-slate-900">ONE WORD AND/OR A NUMBER</strong> from the passage for each answer.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded p-4 space-y-4 text-sm leading-relaxed">
+            <div class="text-center font-bold text-[#0b2545] border-b pb-1">New Zealand’s kākāpō</div>
+
+            <div>
+              <div class="font-bold text-slate-900 mb-1">A type of parrot:</div>
+              <ul class="list-disc ml-5 space-y-2">
+                <li id="card-q7">
+                  diet consists of fern fronds, various parts of a tree and
+                  <input type="text" id="q7" oninput="markAnswered(7)" class="cd-input w-28 ml-1" placeholder="7">
+                </li>
+                <li id="card-q8">
+                  nests are created in
+                  <input type="text" id="q8" oninput="markAnswered(8)" class="cd-input w-28 mx-1" placeholder="8">
+                  where eggs are laid.
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-t pt-2">
+              <div class="font-bold text-slate-900 mb-1">Arrival of Polynesian settlers:</div>
+              <ul class="list-disc ml-5 space-y-2">
+                <li id="card-q9">
+                  the
+                  <input type="text" id="q9" oninput="markAnswered(9)" class="cd-input w-28 mx-1" placeholder="9">
+                  of the kākāpō were used to make clothes.
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-t pt-2">
+              <div class="font-bold text-slate-900 mb-1">Arrival of European colonisers:</div>
+              <ul class="list-disc ml-5 space-y-2">
+                <li id="card-q10">
+                  <input type="text" id="q10" oninput="markAnswered(10)" class="cd-input w-28 mr-1" placeholder="10">
+                  were an animal which they introduced that ate the kākāpō’s food sources.
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-t pt-2">
+              <div class="font-bold text-slate-900 mb-1">Protecting kākāpō:</div>
+              <ul class="list-disc ml-5 space-y-2">
+                <li>Richard Henry, a conservationist, tried to protect the kākāpō.</li>
+                <li id="card-q11">
+                  a definite sighting of female kākāpō on Rakiura Island was reported in the year
+                  <input type="text" id="q11" oninput="markAnswered(11)" class="cd-input w-24 mx-1" placeholder="11">.
+                </li>
+                <li id="card-q12">
+                  the Recovery Plan included an increase in
+                  <input type="text" id="q12" oninput="markAnswered(12)" class="cd-input w-28 mx-1" placeholder="12">.
+                </li>
+                <li id="card-q13">
+                  a current goal of the Recovery Plan is to maintain the involvement of
+                  <input type="text" id="q13" oninput="markAnswered(13)" class="cd-input w-32 mx-1" placeholder="13">
+                  in kākāpō protection.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= QUESTIONS 14–26 (PASSAGE 2) ================= -->
+      <div id="qgroup-2" class="question-group space-y-4 hidden">
+        
+        <!-- Questions 14–18 Section Matching -->
+        <div class="bg-white p-4 border border-slate-300 rounded shadow-sm">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 14–18</h3>
+          <p class="text-xs text-slate-600 mt-1 italic">
+            Reading Passage 2 has seven sections, <strong class="text-slate-900">A–G</strong>. Which section contains the following information?
+          </p>
+          <p class="text-[11px] font-bold text-amber-800 mt-0.5">NB You may use any letter more than once.</p>
+        </div>
+
+        <!-- Table of Statements 14-18 -->
+        <div class="bg-white rounded border border-slate-300 overflow-hidden text-xs md:text-sm">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[#0b2545] text-white">
+                <th class="p-2.5 w-12 text-center">Q#</th>
+                <th class="p-2.5">Target Detail</th>
+                <th class="p-2.5 w-24 text-center">Section</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr class="hover:bg-slate-50" id="card-q14">
+                <td class="p-2.5 text-center font-bold">14</td>
+                <td class="p-2.5 text-slate-800">reference to the research problems that arise from there being only a few surviving large elms</td>
+                <td class="p-2.5 text-center">
+                  <select id="q14" onchange="markAnswered(14)" class="cd-input text-xs font-bold">
+                    <option value="">--</option>
+                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                    <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50" id="card-q15">
+                <td class="p-2.5 text-center font-bold">15</td>
+                <td class="p-2.5 text-slate-800">details of a difference of opinion about the value of reintroducing elms to Britain</td>
+                <td class="p-2.5 text-center">
+                  <select id="q15" onchange="markAnswered(15)" class="cd-input text-xs font-bold">
+                    <option value="">--</option>
+                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                    <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50" id="card-q16">
+                <td class="p-2.5 text-center font-bold">16</td>
+                <td class="p-2.5 text-slate-800">reference to how Dutch elm disease was brought into Britain</td>
+                <td class="p-2.5 text-center">
+                  <select id="q16" onchange="markAnswered(16)" class="cd-input text-xs font-bold">
+                    <option value="">--</option>
+                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                    <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50" id="card-q17">
+                <td class="p-2.5 text-center font-bold">17</td>
+                <td class="p-2.5 text-slate-800">a description of the conditions that have enabled a location in Britain to escape Dutch elm disease</td>
+                <td class="p-2.5 text-center">
+                  <select id="q17" onchange="markAnswered(17)" class="cd-input text-xs font-bold">
+                    <option value="">--</option>
+                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                    <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50" id="card-q18">
+                <td class="p-2.5 text-center font-bold">18</td>
+                <td class="p-2.5 text-slate-800">reference to the stage at which young elms become vulnerable to Dutch elm disease</td>
+                <td class="p-2.5 text-center">
+                  <select id="q18" onchange="markAnswered(18)" class="cd-input text-xs font-bold">
+                    <option value="">--</option>
+                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                    <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Questions 19–23 People Matching -->
+        <div class="bg-white p-4 border border-slate-300 rounded shadow-sm">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 19–23</h3>
+          <p class="text-xs text-slate-600 mt-1 italic">
+            Match each statement with the correct person, <strong class="text-slate-900">A, B, or C</strong>.
+          </p>
+          <div class="mt-2 bg-indigo-50 border border-indigo-200 p-2 rounded text-xs grid grid-cols-3 gap-2">
+            <div><strong>A.</strong> Matt Elliot</div>
+            <div><strong>B.</strong> Karen Russell</div>
+            <div><strong>C.</strong> Peter Bourne</div>
+          </div>
+        </div>
+
+        <!-- Q19 -->
+        <div class="question-card" id="card-q19">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">19</span>
+              <span class="text-slate-800">If a tree gets infected with Dutch elm disease, the damage rapidly becomes visible.</span>
+            </div>
+            <select id="q19" onchange="markAnswered(19)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Q20 -->
+        <div class="question-card" id="card-q20">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">20</span>
+              <span class="text-slate-800">It may be better to wait and see if the mature elms that have survived continue to flourish.</span>
+            </div>
+            <select id="q20" onchange="markAnswered(20)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Q21 -->
+        <div class="question-card" id="card-q21">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">21</span>
+              <span class="text-slate-800">There must be an explanation for the survival of some mature elms.</span>
+            </div>
+            <select id="q21" onchange="markAnswered(21)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Q22 -->
+        <div class="question-card" id="card-q22">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">22</span>
+              <span class="text-slate-800">We need to be aware that insects carrying Dutch elm disease are not very far away.</span>
+            </div>
+            <select id="q22" onchange="markAnswered(22)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Q23 -->
+        <div class="question-card" id="card-q23">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">23</span>
+              <span class="text-slate-800">You understand the effect Dutch elm disease has had when you see evidence of how prominent the tree once was.</span>
+            </div>
+            <select id="q23" onchange="markAnswered(23)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Questions 24–26 Summary Completion -->
+        <div class="bg-white p-5 border border-slate-300 rounded shadow-sm space-y-3">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 24–26</h3>
+          <p class="text-xs text-slate-600 italic">
+            Complete the summary below. Choose <strong class="text-slate-900">ONE WORD ONLY</strong> from the passage for each answer.
+          </p>
+          <div class="bg-slate-50 border border-slate-200 p-4 rounded text-sm leading-relaxed space-y-2">
+            <div class="font-bold text-center text-[#0b2545]">Uses of a popular tree</div>
+            <p>
+              For hundreds of years, the only tree that was more popular in Britain than elm was
+              <input type="text" id="q24" oninput="markAnswered(24)" class="cd-input w-28 mx-1" placeholder="24">.
+              Starting in the Bronze Age, many tools were made from elm and people also used it to make weapons. In the 18th century, it was grown to provide wood for boxes and
+              <input type="text" id="q25" oninput="markAnswered(25)" class="cd-input w-28 mx-1" placeholder="25">.
+              Due to its strength, elm was often used for mining equipment and the Cutty Sark’s
+              <input type="text" id="q26" oninput="markAnswered(26)" class="cd-input w-28 mx-1" placeholder="26">
+              was also constructed from elm.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= QUESTIONS 27–40 (PASSAGE 3) ================= -->
+      <div id="qgroup-3" class="question-group space-y-4 hidden">
+        
+        <!-- Multiple Choice 27–30 -->
+        <div class="bg-white p-4 border border-slate-300 rounded shadow-sm">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 27–30</h3>
+          <p class="text-xs text-slate-600 mt-1 italic">
+            Choose the correct letter, <strong class="text-slate-900">A, B, C or D</strong>.
+          </p>
+        </div>
+
+        <!-- Q27 -->
+        <div class="question-card" id="card-q27">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">27</span>
+            <div class="text-sm font-bold text-slate-900">In the first paragraph, the writer introduces the topic of the text by</div>
+          </div>
+          <div class="ml-8 space-y-1.5 text-xs md:text-sm text-slate-800">
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q27" value="A" onchange="markAnswered(27)"> <span><strong>A.</strong> defining some commonly used terms.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q27" value="B" onchange="markAnswered(27)"> <span><strong>B.</strong> questioning a widely held assumption.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q27" value="C" onchange="markAnswered(27)"> <span><strong>C.</strong> mentioning a challenge faced by everyone.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q27" value="D" onchange="markAnswered(27)"> <span><strong>D.</strong> specifying a situation which makes us most anxious.</span></label>
+          </div>
+        </div>
+
+        <!-- Q28 -->
+        <div class="question-card" id="card-q28">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">28</span>
+            <div class="text-sm font-bold text-slate-900">What point does the writer make about firefighters in the second paragraph?</div>
+          </div>
+          <div class="ml-8 space-y-1.5 text-xs md:text-sm text-slate-800">
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q28" value="A" onchange="markAnswered(28)"> <span><strong>A.</strong> The regular changes of stress levels in their working lives make them ideal study subjects.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q28" value="B" onchange="markAnswered(28)"> <span><strong>B.</strong> The strategies they use to handle stress are of particular interest to researchers.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q28" value="C" onchange="markAnswered(28)"> <span><strong>C.</strong> The stressful nature of their job is typical of many public service professions.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q28" value="D" onchange="markAnswered(28)"> <span><strong>D.</strong> Their personalities make them especially well-suited to working under stress.</span></label>
+          </div>
+        </div>
+
+        <!-- Q29 -->
+        <div class="question-card" id="card-q29">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">29</span>
+            <div class="text-sm font-bold text-slate-900">What is the writer doing in the fourth paragraph?</div>
+          </div>
+          <div class="ml-8 space-y-1.5 text-xs md:text-sm text-slate-800">
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q29" value="A" onchange="markAnswered(29)"> <span><strong>A.</strong> explaining their findings</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q29" value="B" onchange="markAnswered(29)"> <span><strong>B.</strong> justifying their approach</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q29" value="C" onchange="markAnswered(29)"> <span><strong>C.</strong> setting out their objectives</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q29" value="D" onchange="markAnswered(29)"> <span><strong>D.</strong> describing their methodology</span></label>
+          </div>
+        </div>
+
+        <!-- Q30 -->
+        <div class="question-card" id="card-q30">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">30</span>
+            <div class="text-sm font-bold text-slate-900">In the seventh paragraph, the writer describes a mechanism in the brain which</div>
+          </div>
+          <div class="ml-8 space-y-1.5 text-xs md:text-sm text-slate-800">
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q30" value="A" onchange="markAnswered(30)"> <span><strong>A.</strong> enables people to respond more quickly to stressful situations.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q30" value="B" onchange="markAnswered(30)"> <span><strong>B.</strong> results in increased ability to control our levels of anxiety.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q30" value="C" onchange="markAnswered(30)"> <span><strong>C.</strong> produces heightened sensitivity to indications of external threats.</span></label>
+            <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-slate-100 rounded"><input type="radio" name="q30" value="D" onchange="markAnswered(30)"> <span><strong>D.</strong> is activated when there is a need to communicate a sense of danger.</span></label>
+          </div>
+        </div>
+
+        <!-- Questions 31–35 Sentence Endings -->
+        <div class="bg-white p-4 border border-slate-300 rounded shadow-sm">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 31–35</h3>
+          <p class="text-xs text-slate-600 mt-1 italic">
+            Complete each sentence with the correct ending, <strong class="text-slate-900">A–G</strong>, below.
+          </p>
+          <div class="mt-2 bg-amber-50 border border-amber-200 p-2.5 rounded text-xs space-y-1 text-slate-800">
+            <div><strong>A.</strong> made them feel optimistic.</div>
+            <div><strong>B.</strong> took relatively little notice of bad news.</div>
+            <div><strong>C.</strong> responded to negative and positive information in the same way.</div>
+            <div><strong>D.</strong> were feeling under stress.</div>
+            <div><strong>E.</strong> put them in a stressful situation.</div>
+            <div><strong>F.</strong> behaved in a similar manner, regardless of the circumstances.</div>
+            <div><strong>G.</strong> thought it more likely that they would experience something bad.</div>
+          </div>
+        </div>
+
+        <!-- Q31-35 Cards -->
+        <div class="question-card" id="card-q31">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">31</span>
+              <span class="text-slate-800">At times when they were relaxed, the firefighters usually</span>
+            </div>
+            <select id="q31" onchange="markAnswered(31)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="question-card" id="card-q32">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">32</span>
+              <span class="text-slate-800">The researchers noted that when the firefighters were stressed, they</span>
+            </div>
+            <select id="q32" onchange="markAnswered(32)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="question-card" id="card-q33">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">33</span>
+              <span class="text-slate-800">When the firefighters were told good news, they always</span>
+            </div>
+            <select id="q33" onchange="markAnswered(33)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="question-card" id="card-q34">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">34</span>
+              <span class="text-slate-800">The students’ cortisol levels and heart rates were affected when the researchers</span>
+            </div>
+            <select id="q34" onchange="markAnswered(34)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="question-card" id="card-q35">
+          <div class="flex items-start justify-between gap-3 text-sm">
+            <div class="flex items-start gap-2">
+              <span class="cd-qnum">35</span>
+              <span class="text-slate-800">In both experiments, negative information was processed better when the subjects</span>
+            </div>
+            <select id="q35" onchange="markAnswered(35)" class="cd-input text-xs font-bold w-16">
+              <option value="">--</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Questions 36–40 Yes / No / Not Given -->
+        <div class="bg-white p-4 border border-slate-300 rounded shadow-sm">
+          <h3 class="text-lg font-bold text-[#0b2545]">Questions 36–40</h3>
+          <p class="text-xs text-slate-600 mt-1 italic">
+            Do the following statements agree with the claims of the writer in Reading Passage 3?
+          </p>
+          <div class="mt-2 text-xs bg-slate-50 p-2.5 rounded border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-1">
+            <div><strong class="text-slate-900">YES</strong>: agrees with claims</div>
+            <div><strong class="text-slate-900">NO</strong>: contradicts</div>
+            <div><strong class="text-slate-900">NOT GIVEN</strong>: impossible to say</div>
+          </div>
+        </div>
+
+        <!-- Q36 -->
+        <div class="question-card" id="card-q36">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">36</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">The tone of the content we post on social media tends to reflect the nature of the posts in our feeds.</div>
+          </div>
+          <div class="ml-8 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q36" value="YES" onchange="markAnswered(36)"> YES</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q36" value="NO" onchange="markAnswered(36)"> NO</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q36" value="NOT GIVEN" onchange="markAnswered(36)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q37 -->
+        <div class="question-card" id="card-q37">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">37</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">Phones have a greater impact on our stress levels than other electronic media devices.</div>
+          </div>
+          <div class="ml-8 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q37" value="YES" onchange="markAnswered(37)"> YES</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q37" value="NO" onchange="markAnswered(37)"> NO</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q37" value="NOT GIVEN" onchange="markAnswered(37)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q38 -->
+        <div class="question-card" id="card-q38">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">38</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">The more we read about a stressful public event on social media, the less able we are to take the information in.</div>
+          </div>
+          <div class="ml-8 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q38" value="YES" onchange="markAnswered(38)"> YES</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q38" value="NO" onchange="markAnswered(38)"> NO</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q38" value="NOT GIVEN" onchange="markAnswered(38)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q39 -->
+        <div class="question-card" id="card-q39">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">39</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">Stress created by social media posts can lead us to take unnecessary precautions.</div>
+          </div>
+          <div class="ml-8 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q39" value="YES" onchange="markAnswered(39)"> YES</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q39" value="NO" onchange="markAnswered(39)"> NO</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q39" value="NOT GIVEN" onchange="markAnswered(39)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+        <!-- Q40 -->
+        <div class="question-card" id="card-q40">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="cd-qnum">40</span>
+            <div class="text-sm font-medium text-slate-900 leading-snug">Our tendency to be affected by other people’s moods can be used in a positive way.</div>
+          </div>
+          <div class="ml-8 flex flex-wrap gap-4 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q40" value="YES" onchange="markAnswered(40)"> YES</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q40" value="NO" onchange="markAnswered(40)"> NO</label>
+            <label class="flex items-center gap-1.5 cursor-pointer hover:text-blue-900"><input type="radio" name="q40" value="NOT GIVEN" onchange="markAnswered(40)"> NOT GIVEN</label>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <!-- BOTTOM CD-IELTS QUESTION NAVIGATION BAR -->
+  <footer class="h-16 bg-[#1e293b] border-t-2 border-slate-700 flex items-center justify-between px-3 z-30 flex-shrink-0 select-none text-white text-xs">
+    
+    <!-- Left: Passage Selection Tabs -->
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <button id="p-tab-1" onclick="switchPassage(1)" class="px-2.5 py-1.5 rounded font-bold bg-[#c29b38] text-slate-900 flex items-center gap-1 shadow">
+        <span>Part 1 (1–13)</span>
+      </button>
+      <button id="p-tab-2" onclick="switchPassage(2)" class="px-2.5 py-1.5 rounded font-bold text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1">
+        <span>Part 2 (14–26)</span>
+      </button>
+      <button id="p-tab-3" onclick="switchPassage(3)" class="px-2.5 py-1.5 rounded font-bold text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1">
+        <span>Part 3 (27–40)</span>
+      </button>
+    </div>
+
+    <!-- Center: Complete 40 Question Palette -->
+    <div class="overflow-x-auto flex items-center gap-1 px-2 py-1 max-w-[55vw]" id="bottomPaletteContainer">
+      <!-- 40 Question Buttons injected via JS for full interactive tracking -->
+      <div id="paletteButtonsWrapper" class="flex items-center gap-1"></div>
+    </div>
+
+    <!-- Right: Review Checkbox & Navigation arrows -->
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <label class="hidden sm:flex items-center gap-1.5 cursor-pointer text-slate-300 hover:text-white mr-1">
+        <input type="checkbox" id="reviewFlagCheckbox" onchange="toggleReviewFlag()" class="accent-amber-500 rounded">
+        <span>Review</span>
+      </label>
+
+      <button onclick="navigateQuestion(-1)" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 flex items-center justify-center border border-slate-600 font-bold" title="Previous Question">
+        &lt;
+      </button>
+      <button onclick="navigateQuestion(1)" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 flex items-center justify-center border border-slate-600 font-bold" title="Next Question">
+        &gt;
+      </button>
+    </div>
+  </footer>
+
+  <!-- Submission Confirmation Modal -->
+  <div id="confirmModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-lg max-w-md w-full p-6 shadow-2xl border-t-4 border-[#0b2545]">
+      <h3 class="text-xl font-bold text-[#0b2545] mb-2 text-center">Submit Reading Examination?</h3>
+      <p class="text-sm text-slate-600 text-center mb-4">
+        You have answered <span id="modalAnsweredSpan" class="font-bold text-slate-900">0</span> of 40 questions. Upon submitting, your exam will be graded against official Cambridge answer keys with a comprehensive diagnostic report available immediately.
+      </p>
+      <div class="flex items-center gap-3">
+        <button onclick="closeModal('confirmModal')" class="w-1/2 py-2 border border-slate-300 rounded font-semibold text-slate-700 hover:bg-slate-50 transition text-sm">Review Answers</button>
+        <button onclick="gradeAndDisplayResults()" class="w-1/2 py-2 bg-[#0b2545] hover:bg-[#134074] text-white rounded font-bold transition shadow text-sm">Submit Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagnostic Results Dashboard Modal -->
+  <div id="resultsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 hidden overflow-y-auto">
+    <div class="bg-white rounded-xl max-w-5xl w-full p-6 md:p-8 shadow-2xl my-auto max-h-[92vh] overflow-y-auto">
+      
+      <!-- Diagnostic Header -->
+      <div class="border-b-2 border-[#0b2545] pb-3 mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="text-xs uppercase font-bold tracking-widest text-[#8b0000]">Official Cambridge Diagnostic Engine</span>
+          <h2 class="text-2xl md:text-3xl font-bold text-[#0b2545]">IELTS 20 Academic Reading Test 1 Report</h2>
+          <p class="text-xs text-slate-500">Comprehensive Item-Wise Performance, Linguistic Evaluation & Strengths Analysis</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="downloadWordReport()" class="bg-[#0b2545] hover:bg-[#134074] text-white px-4 py-2 rounded font-bold text-xs tracking-wide shadow flex items-center gap-1.5 transition border border-indigo-400">
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span>DOWNLOAD WORD REPORT (.DOC)</span>
+          </button>
+          <button onclick="closeModal('resultsModal')" class="text-slate-400 hover:text-slate-700 p-1">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Score & Band Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-5">
+        <div class="bg-slate-50 p-3.5 rounded border border-slate-200 text-center">
+          <div class="text-[11px] uppercase font-bold text-slate-500">Candidate</div>
+          <div class="text-base font-bold text-slate-900 mt-0.5" id="resCandidate">Student</div>
+          <div class="text-[11px] text-slate-500">ID: IELTS-20-ACAD-01</div>
+        </div>
+        <div class="bg-indigo-50/70 p-3.5 rounded border border-indigo-200 text-center">
+          <div class="text-[11px] uppercase font-bold text-indigo-900">Total Raw Score</div>
+          <div class="text-2xl font-extrabold text-[#0b2545] mt-0.5"><span id="resRawScore">0</span> <span class="text-xs font-normal text-slate-600">/ 40</span></div>
+          <div class="text-[11px] text-indigo-700" id="resAccuracy">0% Accuracy</div>
+        </div>
+        <div class="bg-amber-50 p-3.5 rounded border border-amber-200 text-center">
+          <div class="text-[11px] uppercase font-bold text-amber-900">Estimated Band Score</div>
+          <div class="text-2xl font-extrabold text-amber-800 mt-0.5" id="resBandScore">0.0</div>
+          <div class="text-[11px] text-amber-700 font-semibold" id="resBandLevel">Level: Modest User</div>
+        </div>
+        <div class="bg-emerald-50 p-3.5 rounded border border-emerald-200 text-center">
+          <div class="text-[11px] uppercase font-bold text-emerald-900">Passage 1 / 2 / 3</div>
+          <div class="text-sm font-bold text-emerald-800 mt-1" id="resPartBreakdown">P1: 0 | P2: 0 | P3: 0</div>
+          <div class="text-[11px] text-emerald-700">Detailed Below</div>
+        </div>
+      </div>
+
+      <!-- 40 Question Analysis Table -->
+      <div class="mb-5">
+        <h3 class="text-base font-bold text-slate-900 mb-2">Item-by-Item Diagnostic Assessment (Questions 1–40)</h3>
+        <div class="max-h-64 overflow-y-auto border border-slate-300 rounded">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-100 text-slate-700 sticky top-0 border-b border-slate-300 font-bold">
+              <tr>
+                <th class="p-2 w-10 text-center">Q#</th>
+                <th class="p-2 w-1/3">Target Question / Statement</th>
+                <th class="p-2">Your Answer</th>
+                <th class="p-2">Official Key & Variations</th>
+                <th class="p-2 w-20 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="diagnosticTableBody" class="divide-y divide-slate-200 bg-white">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Qualitative Feedback Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        <div class="p-3.5 rounded bg-emerald-50/80 border border-emerald-200">
+          <h4 class="font-bold text-emerald-950 text-xs mb-1.5 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-emerald-700" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Identified Strengths
+          </h4>
+          <ul class="text-[11px] text-emerald-900 space-y-1 list-disc ml-3.5" id="strengthsList"></ul>
+        </div>
+        <div class="p-3.5 rounded bg-rose-50/80 border border-rose-200">
+          <h4 class="font-bold text-rose-950 text-xs mb-1.5 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-rose-700" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            Vulnerabilities & Traps
+          </h4>
+          <ul class="text-[11px] text-rose-900 space-y-1 list-disc ml-3.5" id="weaknessesList"></ul>
+        </div>
+        <div class="p-3.5 rounded bg-amber-50/80 border border-amber-200">
+          <h4 class="font-bold text-amber-950 text-xs mb-1.5 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-amber-700" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+            Actionable Improvement Plan
+          </h4>
+          <ul class="text-[11px] text-amber-900 space-y-1 list-disc ml-3.5" id="improvementsList"></ul>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="flex items-center justify-between pt-3 border-t border-slate-200">
+        <button onclick="closeModal('resultsModal')" class="px-4 py-1.5 border border-slate-300 rounded font-semibold text-slate-700 hover:bg-slate-100 transition text-xs">
+          Return to Exam
+        </button>
+        <button onclick="downloadWordReport()" class="bg-[#0b2545] hover:bg-[#134074] text-white px-5 py-2 rounded font-bold text-xs tracking-wide shadow flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span>EXPORT COMPLETE WORD REPORT (.DOC)</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // Official Cambridge IELTS 20 Academic Reading Test 1 Answer Specifications & Diagnostic Rules
+    const examQuestions = [
+      // PASSAGE 1 (Q1-13)
+      { id: 1, passage: 1, type: 'radio', prompt: 'There are other parrots that share the kakapo’s inability to fly.', exactKey: 'FALSE', acceptable: ['FALSE', 'F'], notes: 'Passage explicitly states: "It is the world’s only flightless parrot."' },
+      { id: 2, passage: 1, type: 'radio', prompt: 'Adult kakapo produce chicks every year.', exactKey: 'FALSE', acceptable: ['FALSE', 'F'], notes: 'Passage states: "Kākāpō breed in summer and autumn, but only in years when food is plentiful."' },
+      { id: 3, passage: 1, type: 'radio', prompt: 'Adult male kakapo bring food back to nesting females.', exactKey: 'FALSE', acceptable: ['FALSE', 'F'], notes: 'Passage states: "Males play no part in incubation or chick-rearing – females alone incubate eggs and feed the chicks."' },
+      { id: 4, passage: 1, type: 'radio', prompt: 'The Polynesian rat was a greater threat to the kakapo than Polynesian settlers.', exactKey: 'NOT GIVEN', acceptable: ['NOT GIVEN', 'NG'], notes: 'Both are listed as predators/threats, but no comparative statement is made in the text.' },
+      { id: 5, passage: 1, type: 'radio', prompt: 'Kakapo were transferred from Rakiura Island to other locations because they were at risk from feral cats.', exactKey: 'TRUE', acceptable: ['TRUE', 'T'], notes: 'Text: "predation by feral cats on Rakiura Island led to a rapid decline... As a result... evacuated to three island sanctuaries."' },
+      { id: 6, passage: 1, type: 'radio', prompt: 'One Recovery Plan initiative that helped increase the kakapo population size was caring for struggling young birds.', exactKey: 'TRUE', acceptable: ['TRUE', 'T'], notes: 'Text: "rescuing and hand-raising any failing chicks."' },
+      { id: 7, passage: 1, type: 'text', prompt: 'diet consists of fern fronds, various parts of a tree and [ 7 ]', exactKey: 'bulbs', acceptable: ['bulbs', 'bulb'], notes: 'Paragraph 2: "leaves, roots and bark of trees as well as bulbs, and fern fronds."' },
+      { id: 8, passage: 1, type: 'text', prompt: 'nests are created in [ 8 ] where eggs are laid.', exactKey: 'soil', acceptable: ['soil'], notes: 'Paragraph 3: "The 1–4 eggs are laid in soil..."' },
+      { id: 9, passage: 1, type: 'text', prompt: 'the [ 9 ] of the kākāpō were used to make clothes.', exactKey: 'feathers', acceptable: ['feathers', 'feather'], notes: 'Paragraph 4: "used its feathers to make soft cloaks."' },
+      { id: 10, passage: 1, type: 'text', prompt: '[ 10 ] were an animal which they introduced that ate the kākāpō’s food sources.', exactKey: 'deer', acceptable: ['deer'], notes: 'Paragraph 4: "introduced species such as deer depleted the remaining forests of food."' },
+      { id: 11, passage: 1, type: 'text', prompt: 'a definite sighting of female kākāpō on Rakiura Island was reported in the year [ 11 ]', exactKey: '1980', acceptable: ['1980'], notes: 'Paragraph 6: "in 1980 it was confirmed females were also present."' },
+      { id: 12, passage: 1, type: 'text', prompt: 'the Recovery Plan included an increase in [ 12 ]', exactKey: 'funding', acceptable: ['funding', 'funds'], notes: 'Paragraph 8: "a specialist advisory group... and a higher amount of funding."' },
+      { id: 13, passage: 1, type: 'text', prompt: 'a current goal of the Recovery Plan is to maintain the involvement of [ 13 ]', exactKey: 'stakeholders', acceptable: ['stakeholders', 'stakeholder'], notes: 'Paragraph 10: "ensure stakeholders continue to be fully engaged..."' },
+
+      // PASSAGE 2 (Q14-26)
+      { id: 14, passage: 2, type: 'select', prompt: 'research problems from there being only a few surviving large elms', exactKey: 'C', acceptable: ['C'], notes: 'Section C: "opportunities are limited as the number of these mature survivors is relatively small."' },
+      { id: 15, passage: 2, type: 'select', prompt: 'difference of opinion about reintroducing elms to Britain', exactKey: 'G', acceptable: ['G'], notes: 'Section G: Karen Russell (support) vs Matt Elliot (caution/cloning risks).' },
+      { id: 16, passage: 2, type: 'select', prompt: 'how Dutch elm disease was brought into Britain', exactKey: 'B', acceptable: ['B'], notes: 'Section B: Canadian logs destined for boat building carried bark beetles.' },
+      { id: 17, passage: 2, type: 'select', prompt: 'conditions that enabled a location to escape Dutch elm disease', exactKey: 'E', acceptable: ['E'], notes: 'Section E: In Brighton, strong coastal sea winds make it difficult for beetles to attack.' },
+      { id: 18, passage: 2, type: 'select', prompt: 'stage at which young elms become vulnerable', exactKey: 'C', acceptable: ['C'], notes: 'Section C: "Once the trunk... reaches 10–15 centimetres or so in diameter..."' },
+      { id: 19, passage: 2, type: 'select', prompt: 'If infected, the damage rapidly becomes visible.', exactKey: 'B', acceptable: ['B'], notes: 'Karen Russell: "The effects are very quick... return in four to six weeks and trees... show leaf loss..."' },
+      { id: 20, passage: 2, type: 'select', prompt: 'Better to wait and see if surviving mature elms continue to flourish.', exactKey: 'A', acceptable: ['A'], notes: 'Matt Elliot: "Rather than plant new elms... just give nature time to recover"' },
+      { id: 21, passage: 2, type: 'select', prompt: 'There must be an explanation for the survival of some mature elms.', exactKey: 'B', acceptable: ['B'], notes: 'Karen Russell: "I don’t see how it can be entirely down to luck."' },
+      { id: 22, passage: 2, type: 'select', prompt: 'Insects carrying Dutch elm disease are not very far away.', exactKey: 'C', acceptable: ['C'], notes: 'Peter Bourne: "The beetles can just march in... threat is right on our doorstep."' },
+      { id: 23, passage: 2, type: 'select', prompt: 'You understand the effect when you see how prominent it once was.', exactKey: 'A', acceptable: ['A'], notes: 'Matt Elliot: "You look at old photographs... and it’s only then that you realise the impact..."' },
+      { id: 24, passage: 2, type: 'text', prompt: 'only tree that was more popular in Britain than elm was [ 24 ]', exactKey: 'oak', acceptable: ['oak'], notes: 'Section D: "elm ran a close second to oak as the hardwood tree of choice in Britain"' },
+      { id: 25, passage: 2, type: 'text', prompt: 'grown to provide wood for boxes and [ 25 ]', exactKey: 'flooring', acceptable: ['flooring', 'floor'], notes: 'Section D: "items such as storage crates [boxes] and flooring."' },
+      { id: 26, passage: 2, type: 'text', prompt: 'Cutty Sark’s [ 26 ] was also constructed from elm.', exactKey: 'keel', acceptable: ['keel'], notes: 'Section D: "used to build the keel of the 19th-century sailing ship Cutty Sark"' },
+
+      // PASSAGE 3 (Q27-40)
+      { id: 27, passage: 3, type: 'radio', prompt: 'First paragraph introduces topic by', exactKey: 'C', acceptable: ['C'], notes: 'Mentions a challenge faced by everyone: "we are all sometimes required to weigh up information under stressful conditions."' },
+      { id: 28, passage: 3, type: 'radio', prompt: 'Point about firefighters in second paragraph', exactKey: 'A', acceptable: ['A'], notes: 'Workdays vary between relaxed and hectic shifts: "presented the perfect setting for an experiment"' },
+      { id: 29, passage: 3, type: 'radio', prompt: 'Writer doing in fourth paragraph', exactKey: 'D', acceptable: ['D'], notes: 'Describing their methodology ("This is how we arrived at these results. We asked the firefighters to estimate...")' },
+      { id: 30, passage: 3, type: 'radio', prompt: 'Brain mechanism in seventh paragraph', exactKey: 'C', acceptable: ['C'], notes: 'Produces heightened sensitivity to indications of external threats ("causes us to take in warnings and focus on what might go wrong")' },
+      { id: 31, passage: 3, type: 'select', prompt: 'When relaxed, firefighters usually [ 31 ]', exactKey: 'B', acceptable: ['B'], notes: 'Took relatively little notice of bad news ("ignore bad news and embrace the good")' },
+      { id: 32, passage: 3, type: 'select', prompt: 'When stressed, firefighters [ 32 ]', exactKey: 'G', acceptable: ['G'], notes: 'Thought it more likely that they would experience something bad ("became hyper-vigilant to bad news... altered their beliefs")' },
+      { id: 33, passage: 3, type: 'select', prompt: 'When told good news, firefighters always [ 33 ]', exactKey: 'F', acceptable: ['F'], notes: 'Behaved in a similar manner, regardless of circumstances ("stress didn’t change how they responded to good news")' },
+      { id: 34, passage: 3, type: 'select', prompt: 'Students’ cortisol and heart rates affected when researchers [ 34 ]', exactKey: 'E', acceptable: ['E'], notes: 'Put them in a stressful situation (surprise public speech judged and posted online)' },
+      { id: 35, passage: 3, type: 'select', prompt: 'Negative information processed better when subjects [ 35 ]', exactKey: 'D', acceptable: ['D'], notes: 'Were feeling under stress' },
+      { id: 36, passage: 3, type: 'radio', prompt: 'Tone of posts reflects nature of posts in feeds.', exactKey: 'YES', acceptable: ['YES', 'Y'], notes: 'Text: "if we observe positive feeds... more likely to post uplifting messages... If we observe negative posts... create more negative posts."' },
+      { id: 37, passage: 3, type: 'radio', prompt: 'Phones have greater impact on stress than other devices.', exactKey: 'NOT GIVEN', acceptable: ['NOT GIVEN', 'NG'], notes: 'Checking phone is linked to stress, but no comparison with other devices is made.' },
+      { id: 38, passage: 3, type: 'radio', prompt: 'More we read about stressful public event, less able to take info in.', exactKey: 'NO', acceptable: ['NO', 'N'], notes: 'Contradicts text: alarming news temporarily enhances the likelihood people will take in negative reports.' },
+      { id: 39, passage: 3, type: 'radio', prompt: 'Stress from social media can lead to unnecessary precautions.', exactKey: 'YES', acceptable: ['YES', 'Y'], notes: 'Text: creates unjustified collective fear (e.g. trips cancelled across globe, stocks sold prematurely).' },
+      { id: 40, passage: 3, type: 'radio', prompt: 'Tendency to be affected by moods can be used positively.', exactKey: 'YES', acceptable: ['YES', 'Y'], notes: 'Text: "positive emotions, such as hope, are contagious too... powerful in inducing people to act to find solutions."' }
+    ];
+
+    // State
+    let currentPassage = 1;
+    let currentQuestion = 1;
+    const reviewFlags = new Set();
+    let cachedReportData = null;
+
+    // Initialize Navigation Palette (1–40)
+    function initializePalette() {
+      const container = document.getElementById('paletteButtonsWrapper');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 40; i++) {
+        const btn = document.createElement('button');
+        btn.id = `pal-btn-${i}`;
+        btn.className = `w-7 h-7 rounded text-xs font-bold transition flex items-center justify-center border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700`;
+        btn.textContent = i;
+        btn.onclick = () => jumpToQuestion(i);
+        container.appendChild(btn);
+      }
+      updateActiveQuestionIndicator();
+    }
+
+    // Switch Reading Passage (1, 2, or 3)
+    function switchPassage(num) {
+      currentPassage = num;
+
+      // Toggle Left Reading Passages
+      for (let i = 1; i <= 3; i++) {
+        const pEl = document.getElementById(`passage-content-${i}`);
+        const qgEl = document.getElementById(`qgroup-${i}`);
+        const tabEl = document.getElementById(`p-tab-${i}`);
+
+        if (i === num) {
+          pEl.classList.remove('hidden');
+          qgEl.classList.remove('hidden');
+          tabEl.className = 'px-2.5 py-1.5 rounded font-bold bg-[#c29b38] text-slate-900 flex items-center gap-1 shadow';
+        } else {
+          pEl.classList.add('hidden');
+          qgEl.classList.add('hidden');
+          tabEl.className = 'px-2.5 py-1.5 rounded font-bold text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1';
+        }
+      }
+
+      // Reset scroll of reading pane
+      document.getElementById('readingPane').scrollTop = 0;
+    }
+
+    // Jump to specific Question
+    function jumpToQuestion(qNum) {
+      currentQuestion = qNum;
+      const targetPassage = qNum <= 13 ? 1 : qNum <= 26 ? 2 : 3;
+
+      if (currentPassage !== targetPassage) {
+        switchPassage(targetPassage);
+      }
+
+      // Highlight target card
+      document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active-target'));
+      const targetCard = document.getElementById(`card-q${qNum}`);
+      if (targetCard) {
+        targetCard.classList.add('active-target');
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // Update Review flag checkbox
+      document.getElementById('reviewFlagCheckbox').checked = reviewFlags.has(qNum);
+      updateActiveQuestionIndicator();
+    }
+
+    function navigateQuestion(offset) {
+      let nextQ = currentQuestion + offset;
+      if (nextQ < 1) nextQ = 1;
+      if (nextQ > 40) nextQ = 40;
+      jumpToQuestion(nextQ);
+    }
+
+    function toggleReviewFlag() {
+      const isChecked = document.getElementById('reviewFlagCheckbox').checked;
+      if (isChecked) {
+        reviewFlags.add(currentQuestion);
+      } else {
+        reviewFlags.delete(currentQuestion);
+      }
+      updatePaletteButton(currentQuestion);
+    }
+
+    // Answer check & update indicator
+    function markAnswered(qNum) {
+      updatePaletteButton(qNum);
+      updateOverallAnsweredCounter();
+    }
+
+    function isQuestionAnswered(qNum) {
+      const item = examQuestions[qNum - 1];
+      if (item.type === 'text') {
+        const val = document.getElementById(`q${qNum}`)?.value.trim();
+        return Boolean(val && val.length > 0);
+      } else if (item.type === 'radio') {
+        return Boolean(document.querySelector(`input[name="q${qNum}"]:checked`));
+      } else if (item.type === 'select') {
+        const val = document.getElementById(`q${qNum}`)?.value;
+        return Boolean(val && val.length > 0);
+      }
+      return false;
+    }
+
+    function updatePaletteButton(qNum) {
+      const btn = document.getElementById(`pal-btn-${qNum}`);
+      if (!btn) return;
+
+      const answered = isQuestionAnswered(qNum);
+      const isReview = reviewFlags.has(qNum);
+      const isActive = currentQuestion === qNum;
+
+      let classes = 'w-7 h-7 rounded text-xs font-bold transition flex items-center justify-center relative ';
+
+      if (isActive) {
+        classes += 'ring-2 ring-[#c29b38] ';
+      }
+
+      if (answered) {
+        classes += 'bg-[#0b2545] text-white border-2 border-emerald-400 font-extrabold ';
+      } else {
+        classes += 'bg-slate-800 text-slate-300 border border-slate-600 hover:bg-slate-700 ';
+      }
+
+      btn.className = classes;
+
+      if (isReview) {
+        btn.innerHTML = `${qNum}<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full border border-slate-900"></span>`;
+      } else {
+        btn.innerHTML = `${qNum}`;
+      }
+    }
+
+    function updateActiveQuestionIndicator() {
+      for (let i = 1; i <= 40; i++) {
+        updatePaletteButton(i);
+      }
+    }
+
+    function updateOverallAnsweredCounter() {
+      let count = 0;
+      for (let i = 1; i <= 40; i++) {
+        if (isQuestionAnswered(i)) count++;
+      }
+      document.getElementById('answeredHeaderCounter').textContent = `${count} / 40`;
+      document.getElementById('modalAnsweredSpan').textContent = count;
+    }
+
+    // Interactive Text Highlighter
+    function toggleHighlightSelection() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount || selection.isCollapsed) return;
+
+      const range = selection.getRangeAt(0);
+      const span = document.createElement('span');
+      span.className = 'cd-highlight';
+      span.textContent = selection.toString();
+
+      try {
+        range.deleteContents();
+        range.insertNode(span);
+        selection.removeAllRanges();
+      } catch (e) {
+        // Fallback if cross-boundary selection
+      }
+    }
+
+    // Modal Helpers
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Normalization & Tolerance Scoring
+    function cleanStr(s) {
+      return (s || '')
+        .toLowerCase()
+        .replace(/[''’]/g, "'")
+        .replace(/[^a-z0-9]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function checkAnswerCorrectness(candidateAns, item) {
+      if (!candidateAns || candidateAns === '(Blank)' || candidateAns === '--') return false;
+
+      const cleanCandidate = cleanStr(candidateAns);
+      if (!cleanCandidate) return false;
+
+      // True / False / Not Given / Yes / No
+      if (item.acceptable.includes('TRUE') || item.acceptable.includes('YES')) {
+        const u = candidateAns.toUpperCase().trim();
+        return item.acceptable.some(a => u === a || (u === 'T' && a === 'TRUE') || (u === 'F' && a === 'FALSE') || (u === 'NG' && a === 'NOT GIVEN') || (u === 'Y' && a === 'YES') || (u === 'N' && a === 'NO'));
+      }
+
+      // Multiple choice or Select
+      if (item.type === 'select' || (item.type === 'radio' && item.acceptable.length === 1)) {
+        return candidateAns.toUpperCase().trim() === item.exactKey.toUpperCase().trim();
+      }
+
+      // Word Fill variants
+      return item.acceptable.some(acc => cleanCandidate === cleanStr(acc));
+    }
+
+    function calculateAcademicReadingBand(raw) {
+      if (raw >= 39) return { band: '9.0', label: 'Expert User' };
+      if (raw >= 37) return { band: '8.5', label: 'Very Good User +' };
+      if (raw >= 35) return { band: '8.0', label: 'Very Good User' };
+      if (raw >= 33) return { band: '7.5', label: 'Good User +' };
+      if (raw >= 30) return { band: '7.0', label: 'Good User' };
+      if (raw >= 27) return { band: '6.5', label: 'Competent User +' };
+      if (raw >= 23) return { band: '6.0', label: 'Competent User' };
+      if (raw >= 19) return { band: '5.5', label: 'Modest User +' };
+      if (raw >= 15) return { band: '5.0', label: 'Modest User' };
+      if (raw >= 13) return { band: '4.5', label: 'Limited User +' };
+      if (raw >= 10) return { band: '4.0', label: 'Limited User' };
+      return { band: '3.5', label: 'Extremely Limited User' };
+    }
+
+    // Submit Exam & Grade
+    function gradeAndDisplayResults() {
+      closeModal('confirmModal');
+
+      let rawScore = 0;
+      let p1 = 0, p2 = 0, p3 = 0;
+      const questionResults = [];
+
+      examQuestions.forEach(item => {
+        let candidateAns = '(Blank)';
+
+        if (item.type === 'text') {
+          const el = document.getElementById(`q${item.id}`);
+          candidateAns = (el?.value || '').trim() || '(Blank)';
+        } else if (item.type === 'radio') {
+          const checked = document.querySelector(`input[name="q${item.id}"]:checked`);
+          candidateAns = checked ? checked.value : '(Blank)';
+        } else if (item.type === 'select') {
+          const sel = document.getElementById(`q${item.id}`);
+          candidateAns = (sel?.value || '').trim() || '--';
+        }
+
+        const isCorrect = checkAnswerCorrectness(candidateAns, item);
+
+        if (isCorrect) {
+          rawScore++;
+          if (item.passage === 1) p1++;
+          else if (item.passage === 2) p2++;
+          else if (item.passage === 3) p3++;
+        }
+
+        questionResults.push({
+          num: item.id,
+          passage: item.passage,
+          item: item,
+          candidate: candidateAns,
+          isCorrect: isCorrect
+        });
+      });
+
+      const bandData = calculateAcademicReadingBand(rawScore);
+
+      cachedReportData = {
+        candidateName: 'Academic Candidate',
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+        rawScore,
+        accuracy: Math.round((rawScore / 40) * 100),
+        band: bandData.band,
+        bandLabel: bandData.label,
+        p1, p2, p3,
+        questionResults
+      };
+
+      // Populate UI
+      document.getElementById('resRawScore').textContent = rawScore;
+      document.getElementById('resAccuracy').textContent = `${cachedReportData.accuracy}% Overall Accuracy`;
+      document.getElementById('resBandScore').textContent = bandData.band;
+      document.getElementById('resBandLevel').textContent = `Level: ${bandData.label}`;
+      document.getElementById('resPartBreakdown').textContent = `P1: ${p1}/13 | P2: ${p2}/13 | P3: ${p3}/14`;
+
+      // Build Diagnostic Table
+      const tbody = document.getElementById('diagnosticTableBody');
+      tbody.innerHTML = '';
+
+      questionResults.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = r.isCorrect ? 'bg-emerald-50/40' : 'bg-rose-50/40';
+
+        const keysFormatted = r.item.acceptable ? r.item.acceptable.join(' / ') : r.item.exactKey;
+
+        tr.innerHTML = `
+          <td class="p-2 text-center font-bold text-slate-800">${r.num}</td>
+          <td class="p-2 text-slate-700">${r.item.prompt}</td>
+          <td class="p-2 font-semibold ${r.isCorrect ? 'text-emerald-800' : 'text-rose-800'}">${r.candidate}</td>
+          <td class="p-2 font-mono text-[11px] text-slate-800">${keysFormatted}</td>
+          <td class="p-2 text-center">
+            ${r.isCorrect
+              ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">PASS</span>'
+              : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">FAIL</span>'
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Feedback Points
+      const strengthsUl = document.getElementById('strengthsList');
+      const weaknessesUl = document.getElementById('weaknessesList');
+      const improvementsUl = document.getElementById('improvementsList');
+
+      strengthsUl.innerHTML = '';
+      weaknessesUl.innerHTML = '';
+      improvementsUl.innerHTML = '';
+
+      if (p1 >= 10) {
+        strengthsUl.innerHTML += '<li><strong>Passage 1 Scanning:</strong> Accurate factual keyword identification and chronological tracking in zoological texts.</li>';
+      } else {
+        strengthsUl.innerHTML += '<li><strong>Primary Reading:</strong> Solid grasp of general parrot life cycle and historical predator impacts.</li>';
+      }
+      if (p2 >= 10) {
+        strengthsUl.innerHTML += '<li><strong>Section Mapping:</strong> Strong ability to attribute ecological opinions to specific researchers in Passage 2.</li>';
+      }
+      if (p3 >= 10) {
+        strengthsUl.innerHTML += '<li><strong>Scientific Inference:</strong> Excellent comprehension of complex neurological and social contagion experiments.</li>';
+      }
+
+      if (p1 < 10) {
+        weaknessesUl.innerHTML += '<li><strong>T/F/NG Confusion:</strong> Tendency to mark "FALSE" when information is unverified ("NOT GIVEN").</li>';
+      }
+      if (p2 < 10) {
+        weaknessesUl.innerHTML += '<li><strong>Researcher Paraphrase Matching:</strong> Overlooking subtle qualifiers in statements by Russell and Elliot.</li>';
+      }
+      if (p3 < 10) {
+        weaknessesUl.innerHTML += '<li><strong>Sentence Ending Attribution:</strong> Confounding stressed vs relaxed firefighter outcomes.</li>';
+      }
+
+      improvementsUl.innerHTML += '<li><strong>T/F/NG Rule:</strong> If there is no explicit comparison made (e.g. rat vs settlers in Q4), select NOT GIVEN.</li>';
+      improvementsUl.innerHTML += '<li><strong>Keyword Pre-scanning:</strong> In Section Matching, highlight unique anchors (e.g. "keel", "Brighton", "Cutty Sark") before full-text reading.</li>';
+      improvementsUl.innerHTML += '<li><strong>Word Limit Verification:</strong> Ensure exact single-word answers without additional prepositions or articles.</li>';
+
+      openModal('resultsModal');
+    }
+
+    // Automated Downloadable Microsoft Word (.doc) Grading Report Generator
+    function downloadWordReport() {
+      if (!cachedReportData) {
+        gradeAndDisplayResults();
+      }
+
+      const d = cachedReportData;
+
+      let itemRows = '';
+      d.questionResults.forEach(r => {
+        const outcome = r.isCorrect 
+          ? `<span style="color: #0b6623; font-weight: bold;">PASS (+1)</span>`
+          : `<span style="color: #b30000; font-weight: bold;">FAIL (0)</span>`;
+
+        const acceptableStr = r.item.acceptable ? r.item.acceptable.join(' | ') : r.item.exactKey;
+
+        itemRows += `
+          <tr style="border-bottom: 1px solid #ccc;">
+            <td style="padding: 6px; text-align: center; font-weight: bold; border: 1px solid #999;">${r.num}</td>
+            <td style="padding: 6px; text-align: center; border: 1px solid #999;">Part ${r.passage}</td>
+            <td style="padding: 6px; border: 1px solid #999;">${r.item.prompt}</td>
+            <td style="padding: 6px; font-weight: bold; border: 1px solid #999;">${r.candidate}</td>
+            <td style="padding: 6px; border: 1px solid #999; font-family: 'Courier New', monospace;">${acceptableStr}</td>
+            <td style="padding: 6px; text-align: center; border: 1px solid #999;">${outcome}</td>
+            <td style="padding: 6px; font-size: 9.5pt; border: 1px solid #999;">${r.item.notes}</td>
+          </tr>
+        `;
+      });
+
+      const wordDoc = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset="utf-8">
+          <title>IELTS 20 Academic Reading Test 1 - Official Performance & Diagnostic Report</title>
+          <style>
+            @page { size: A4 portrait; margin: 1.5cm; }
+            body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #1a1a1a; line-height: 1.35; }
+            .header-banner { text-align: center; border-bottom: 3px double #0b2545; padding-bottom: 8px; margin-bottom: 15px; }
+            .title-main { font-size: 19pt; font-weight: bold; color: #0b2545; text-transform: uppercase; }
+            .title-sub { font-size: 11.5pt; color: #555; font-style: italic; }
+            .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; background-color: #f8fafc; border: 1px solid #94a3b8; }
+            .meta-table td { padding: 6px 10px; border: 1px solid #cbd5e1; font-size: 10pt; }
+            .score-card { border: 2px solid #0b2545; background-color: #eef4f8; padding: 10px; margin-bottom: 18px; text-align: center; }
+            .band-num { font-size: 30pt; font-weight: bold; color: #0b2545; }
+            .section-heading { font-size: 13pt; font-weight: bold; color: #0b2545; border-bottom: 1.5px solid #0b2545; padding-bottom: 3px; margin-top: 18px; margin-bottom: 6px; text-transform: uppercase; }
+            .data-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 9.5pt; }
+            .data-table th { background-color: #0b2545; color: #ffffff; padding: 6px; border: 1px solid #555; text-align: left; }
+            .callout-box { padding: 10px 12px; margin-bottom: 12px; border-left: 5px solid #0b2545; background-color: #f8fafc; }
+            ul { margin-top: 3px; margin-bottom: 6px; padding-left: 18px; }
+            li { margin-bottom: 4px; }
+          </style>
+        </head>
+        <body>
+          <div class="header-banner">
+            <div class="title-main">Cambridge Assessment English • IELTS 20</div>
+            <div class="title-sub">Academic Reading Test 1 Diagnostic Performance & Evaluation Report</div>
+          </div>
+
+          <table class="meta-table">
+            <tr>
+              <td style="width: 25%;"><strong>Candidate Name:</strong></td>
+              <td style="width: 35%;">${d.candidateName}</td>
+              <td style="width: 20%;"><strong>Test Date:</strong></td>
+              <td style="width: 20%;">${d.date}</td>
+            </tr>
+            <tr>
+              <td><strong>Testing Interface:</strong></td>
+              <td>Computer-Delivered (CD-IELTS)</td>
+              <td><strong>Target Band Scale:</strong></td>
+              <td>Official Band 9.0 Standard</td>
+            </tr>
+          </table>
+
+          <div class="score-card">
+            <table style="width: 100%; border: none;">
+              <tr>
+                <td style="text-align: center; border: none; width: 33%;">
+                  <div style="font-size: 9pt; color: #555; text-transform: uppercase; font-weight: bold;">Raw Score</div>
+                  <div style="font-size: 24pt; font-weight: bold; color: #0b2545;">${d.rawScore} / 40</div>
+                  <div style="font-size: 9pt; color: #555;">(${d.accuracy}% Overall Accuracy)</div>
+                </td>
+                <td style="text-align: center; border-left: 1px solid #999; border-right: 1px solid #999; width: 34%;">
+                  <div style="font-size: 9pt; color: #555; text-transform: uppercase; font-weight: bold;">Estimated IELTS Band</div>
+                  <div class="band-num">${d.band}</div>
+                  <div style="font-size: 10pt; font-weight: bold; color: #8b0000;">${d.bandLabel}</div>
+                </td>
+                <td style="text-align: center; border: none; width: 33%;">
+                  <div style="font-size: 9pt; color: #555; text-transform: uppercase; font-weight: bold;">Part Accuracy</div>
+                  <div style="font-size: 11pt; font-weight: bold; color: #0b6623; margin-top: 8px;">
+                    Part 1: ${d.p1}/13<br>
+                    Part 2: ${d.p2}/13<br>
+                    Part 3: ${d.p3}/14
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="section-heading">1. Qualitative Diagnostic Evaluation</div>
+          
+          <div class="callout-box">
+            <strong style="color: #0b6623;">Demonstrated Reading Strengths:</strong>
+            <ul>
+              <li><strong>Factual Scanning:</strong> High competence in identifying botanical, chronological, and zoological terms (bulbs, soil, feathers, deer, 1980) in Passage 1.</li>
+              <li><strong>Academic Attribution:</strong> Skill in matching researcher perspectives (Russell, Elliot, Bourne) regarding the survival and reintroduction of mature elms.</li>
+              <li><strong>Discourse Tracking:</strong> Solid understanding of experimental controls and psychological reactions to bad vs good news under acute stress.</li>
+            </ul>
+          </div>
+
+          <div class="callout-box">
+            <strong style="color: #b30000;">Observed Vulnerabilities & Common Distractor Traps:</strong>
+            <ul>
+              <li><strong>Contradiction vs. Absence:</strong> Confusing FALSE with NOT GIVEN when no comparative data exists in the source paragraph.</li>
+              <li><strong>Synonym Paraphrasing:</strong> Misattributing statements by neglecting qualifying modal verbs (e.g. "must be", "may be").</li>
+            </ul>
+          </div>
+
+          <div class="callout-box">
+            <strong style="color: #855a00;">Strategic Action Plan for Band 8.5+:</strong>
+            <ul>
+              <li><strong>Pre-scanning Heading Keywords:</strong> Mark distinctive entities before reading each paragraph to reduce scanning latency.</li>
+              <li><strong>Strict Limit Verification:</strong> Ensure answers in Summary Completion comply strictly with the ONE WORD ONLY restriction.</li>
+            </ul>
+          </div>
+
+          <div class="section-heading">2. Exhaustive Item-Wise Diagnostic Table (Questions 1–40)</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Q#</th>
+                <th style="width: 8%; text-align: center;">Part</th>
+                <th style="width: 25%;">Target Statement / Prompt</th>
+                <th style="width: 15%;">Your Answer</th>
+                <th style="width: 15%;">Official Key & Variations</th>
+                <th style="width: 8%; text-align: center;">Result</th>
+                <th style="width: 24%;">Explanation & Text Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemRows}
+            </tbody>
+          </table>
+
+          <div style="margin-top: 25px; border-top: 1px solid #777; padding-top: 8px; font-size: 8.5pt; color: #555; text-align: center;">
+            Official Cambridge IELTS 20 Practice Test Suite • Generated by Cambridge Standard Automated Scoring Engine
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff', wordDoc], { type: 'application/msword;charset=utf-8' });
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `IELTS_20_Reading_Test_1_Diagnostic_Report.doc`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+    }
+
+    // Startup Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initializePalette();
+      switchPassage(1);
+      jumpToQuestion(1);
+      updateOverallAnsweredCounter();
+    });
+  </script>
+</body>
+</html>
